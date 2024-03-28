@@ -14,13 +14,22 @@
  * limitations under the License.
  */
 
-plugins {
-    // required to download the toolchain (jdk) from a remote repository
-    // https://github.com/gradle/foojay-toolchains
-    // https://docs.gradle.org/current/userguide/toolchains.html#sub:download_repositories
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.7.0"
-}
+package nextflow.hello
 
-rootProject.name = 'nf-polly'
-include('plugins')
-include('plugins:nf-polly')
+import groovy.transform.CompileStatic
+import nextflow.plugin.BasePlugin
+import nextflow.plugin.Scoped
+import org.pf4j.PluginWrapper
+
+/**
+ * Implements the Hello plugins entry point
+ *
+ * @author Paolo Di Tommaso <paolo.ditommaso@gmail.com>
+ */
+@CompileStatic
+class PollyPlugin extends BasePlugin {
+
+    PollyPlugin(PluginWrapper wrapper) {
+        super(wrapper)
+    }
+}

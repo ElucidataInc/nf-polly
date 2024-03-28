@@ -1,5 +1,16 @@
 package nextflow.hello
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
+import software.amazon.awssdk.core.SdkBytes;
+import software.amazon.awssdk.services.kinesis.KinesisClient;
+import software.amazon.awssdk.services.kinesis.model.KinesisException;
+import software.amazon.awssdk.services.kinesis.model.PutRecordRequest;
+import software.amazon.awssdk.services.kinesis.model.PutRecordResponse;
+import java.util.Map;
+import java.util.*;
 
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -23,7 +34,9 @@ import nextflow.plugin.extension.PluginExtensionPoint
  */
 @Slf4j
 @CompileStatic
-class HelloExtension extends PluginExtensionPoint {
+class PollyExtension extends PluginExtensionPoint {
+    // static final Logger logger = LogManager.getLogger(KinesisWriteApp.class);
+    static final ObjectMapper objMapper = new ObjectMapper();
 
     /*
      * A session hold information about current execution of the script
@@ -42,7 +55,7 @@ class HelloExtension extends PluginExtensionPoint {
      *    prefix = 'Mrs'
      * }
      */
-     private HelloConfig config
+     private PollyConfig config
 
     /*
      * nf-core initializes the plugin once loaded and session is ready
@@ -51,7 +64,7 @@ class HelloExtension extends PluginExtensionPoint {
     @Override
     protected void init(Session session) {
         this.session = session
-        this.config = new HelloConfig(session.config.navigate('hello') as Map)
+        this.config = new PollyConfig(session.config.navigate('hello') as Map)
     }
 
     /*
@@ -107,8 +120,21 @@ class HelloExtension extends PluginExtensionPoint {
      * Using @Function annotation we allow this function can be imported from the pipeline script
      */
     @Function
-    String randomString(int length=9){
-        new Random().with {(1..length).collect {(('a'..'z')).join(null)[ nextInt((('a'..'z')).join(null).length())]}.join(null)}
+    void reportMetric(var key,var val){
+        String streamName ="pravaah-dev-user-defined-metrics-events-v1";
+        String partitionKey="1234";
+        var keyValuePairs = Map.of(key, val);
+        var data = objMapper.writeValueAsBytes(Map.of("metric", keyValuePairs));
+        // Instantiate the client
+        var client = KinesisClient.builder().build();
+        try {
+            // construct single PutRecord request
+            var putRequest = PutRecordRequest.builder().partitionKey(partitionKey).streamName(streamName).data(SdkBytes.fromByteArray(data)).build();
+            // execute single PutRecord request
+            PutRecordResponse response = client.putRecord(putRequest);
+            System.out.println("Produced Record " + response.sequenceNumber() + " to Shard " + response.shardId() + " (line 145)");
+        }catch (KinesisException e) {
+            System.out.println("Failed to produce "  + ": " + e.getMessage());
+        }
     }
-
 }

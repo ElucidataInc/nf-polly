@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
-Plugin-Id: nf-hello
+Plugin-Id: nf-polly
 Plugin-Version: 0.5.0
-Plugin-Class: nextflow.hello.HelloPlugin
+Plugin-Class: nextflow.hello.PollyPlugin
 Plugin-Provider: nextflow
 Plugin-Requires: >=24.01.0-edge

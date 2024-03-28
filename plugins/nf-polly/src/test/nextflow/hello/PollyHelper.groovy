@@ -1,5 +1,6 @@
 /*
- * Copyright 2021, Seqera Labs
+ * Copyright 2020-2022, Seqera Labs
+ * Copyright 2013-2019, Centre for Genomic Regulation (CRG)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +17,29 @@
 
 package nextflow.hello
 
-import groovy.transform.CompileStatic
-import nextflow.Session
-import nextflow.trace.TraceObserver
-import nextflow.trace.TraceObserverFactory
+import com.google.common.jimfs.Configuration
+import com.google.common.jimfs.Jimfs
+import groovy.transform.Memoized
+
+import java.nio.file.Files
+import java.nio.file.Path
+import java.util.zip.GZIPInputStream
+
 /**
- * Implements the validation observer factory
  *
  * @author Paolo Di Tommaso <paolo.ditommaso@gmail.com>
  */
-@CompileStatic
-class HelloFactory implements TraceObserverFactory {
+class PollyHelper {
 
-    @Override
-    Collection<TraceObserver> create(Session session) {
-        final result = new ArrayList()
-        result.add( new HelloObserver() )
+    static private fs = Jimfs.newFileSystem(Configuration.unix());
+
+    static Path createInMemTempFile(String name='temp.file', String content=null) {
+        Path tmp = fs.getPath("/tmp");
+        tmp.mkdir()
+        def result = Files.createTempDirectory(tmp, 'test').resolve(name)
+        if( content )
+            result.text = content
         return result
     }
+
 }

@@ -22,11 +22,11 @@ import groovy.transform.PackageScope
  *
  */
 @PackageScope
-class HelloConfig {
+class PollyConfig {
 
     final private String prefix
 
-    HelloConfig(Map map){
+    PollyConfig(Map map){
         def config = map ?: Collections.emptyMap()
         prefix = config.prefix ?: 'Mr.'
     }

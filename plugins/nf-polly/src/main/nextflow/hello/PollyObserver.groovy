@@ -17,19 +17,26 @@
 package nextflow.hello
 
 import groovy.transform.CompileStatic
-import nextflow.plugin.BasePlugin
-import nextflow.plugin.Scoped
-import org.pf4j.PluginWrapper
+import groovy.util.logging.Slf4j
+import nextflow.Session
+import nextflow.trace.TraceObserver
 
 /**
- * Implements the Hello plugins entry point
+ * Example workflow events observer
  *
  * @author Paolo Di Tommaso <paolo.ditommaso@gmail.com>
  */
+@Slf4j
 @CompileStatic
-class HelloPlugin extends BasePlugin {
+class PollyObserver implements TraceObserver {
 
-    HelloPlugin(PluginWrapper wrapper) {
-        super(wrapper)
+    @Override
+    void onFlowCreate(Session session) {
+        log.info "Pipeline is starting! 🚀"
+    }
+
+    @Override
+    void onFlowComplete() {
+        log.info "Pipeline complete! 👋"
     }
 }

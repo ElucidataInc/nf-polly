@@ -17,12 +17,12 @@ import java.nio.file.Path
 
 
 /**
- * Unit test for Hello DSL
+ * Unit test for Polly DSL
  *
  * @author : jorge <jorge.aguilera@seqera.io>
  */
 @Timeout(10)
-class HelloDslTest extends Dsl2Spec{
+class PollyDslTest extends Dsl2Spec{
 
     @Shared String pluginsMode
 
@@ -66,11 +66,11 @@ class HelloDslTest extends Dsl2Spec{
     def 'should perform a hi and create a channel' () {
         when:
         def SCRIPT = '''
-            include {reverse} from 'plugin/nf-hello'
+            include {reverse} from 'plugin/nf-polly'
             channel.reverse('hi!') 
             '''
         and:
-        def result = new MockScriptRunner([hello:[prefix:'>>']]).setScript(SCRIPT).execute()
+        def result = new MockScriptRunner([Polly:[prefix:'>>']]).setScript(SCRIPT).execute()
         then:
         result.val == 'hi!'.reverse()
         result.val == Channel.STOP
@@ -79,7 +79,7 @@ class HelloDslTest extends Dsl2Spec{
     def 'should store a goodbye' () {
         when:
         def SCRIPT = '''
-            include {goodbye} from 'plugin/nf-hello'
+            include {goodbye} from 'plugin/nf-polly'
             channel
                 .of('folks')
                 .goodbye() 
@@ -95,9 +95,9 @@ class HelloDslTest extends Dsl2Spec{
     def 'can use an imported function' () {
         when:
         def SCRIPT = '''
-            include {randomString} from 'plugin/nf-hello'
+            include {reportMetric} from 'plugin/nf-polly'
             channel
-                .of( randomString(20) )                
+                .of( reportMetric("key","value") )                
             '''
         and:
         def result = new MockScriptRunner([:]).setScript(SCRIPT).execute()
