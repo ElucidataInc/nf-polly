@@ -12,6 +12,7 @@ import org.pf4j.PluginDescriptorFinder
 import spock.lang.Shared
 import spock.lang.Timeout
 import test.Dsl2Spec
+import software.amazon.awssdk.core.exception.SdkClientException
 
 import java.nio.file.Path
 
