@@ -120,11 +120,11 @@ class PollyExtension extends PluginExtensionPoint {
      * Using @Function annotation we allow this function can be imported from the pipeline script
      */
     @Function
-    void reportMetric(String key, String value) {
+    void reportMetric(var key, var value) {
     // logger.info("Starting PutRecord Producer");
     String streamName = "pravaah-dev-user-defined-metrics-events-v1";
     String partitionKey = "12345";
-    Map<String, String> keyValuePairs = Map.of(key, value);
+    Map<Object, Object> keyValuePairs = Map.of(key, value);
     try {
         byte[] data = new ObjectMapper().writeValueAsBytes(Map.of("metricfromTest5", keyValuePairs));
         KinesisClient client = KinesisClient.builder().build();
