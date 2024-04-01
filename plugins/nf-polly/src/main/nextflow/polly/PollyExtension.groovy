@@ -35,9 +35,9 @@ import nextflow.plugin.extension.PluginExtensionPoint
 @Slf4j
 @CompileStatic
 class PollyExtension extends PluginExtensionPoint {
-    // static final Logger logger = LogManager.getLogger(KinesisWriteApp.class);
-    static final ObjectMapper objMapper = new ObjectMapper();
 
+    static final Logger logger = LoggerFactory.getLogger(PollyExtension.class);
+    // static final ObjectMapper objMapper = new ObjectMapper();
     /*
      * A session hold information about current execution of the script
      */
@@ -120,21 +120,23 @@ class PollyExtension extends PluginExtensionPoint {
      * Using @Function annotation we allow this function can be imported from the pipeline script
      */
     @Function
-    void reportMetric(var key,var val){
-        String streamName ="pravaah-dev-user-defined-metrics-events-v1";
-        String partitionKey="1234";
-        var keyValuePairs = Map.of(key, val);
-        var data = objMapper.writeValueAsBytes(Map.of("metric", keyValuePairs));
-        // Instantiate the client
-        var client = KinesisClient.builder().build();
-        try {
-            // construct single PutRecord request
-            var putRequest = PutRecordRequest.builder().partitionKey(partitionKey).streamName(streamName).data(SdkBytes.fromByteArray(data)).build();
-            // execute single PutRecord request
-            PutRecordResponse response = client.putRecord(putRequest);
-            System.out.println("Produced Record " + response.sequenceNumber() + " to Shard " + response.shardId() + " (line 145)");
-        }catch (KinesisException e) {
-            System.out.println("Failed to produce "  + ": " + e.getMessage());
-        }
+    void reportMetric(String key, String value) {
+    // logger.info("Starting PutRecord Producer");
+    String streamName = "pravaah-dev-user-defined-metrics-events-v1";
+    String partitionKey = "12345";
+    Map<String, String> keyValuePairs = Map.of(key, value);
+    try {
+        byte[] data = new ObjectMapper().writeValueAsBytes(Map.of("metricfromTest5", keyValuePairs));
+        KinesisClient client = KinesisClient.builder().build();
+        PutRecordRequest putRequest = PutRecordRequest.builder()
+                .partitionKey(partitionKey)
+                .streamName(streamName)
+                .data(SdkBytes.fromByteArray(data))
+                .build();
+        PutRecordResponse response = client.putRecord(putRequest);
+        System.out.println("Produced Record " + response.sequenceNumber() + " to Shard " + response.shardId() + " (line 145)");
+    } catch (Exception e) {
+        System.out.println("Failed to produce: " + e.getMessage());
     }
+}
 }

@@ -12,13 +12,12 @@ import org.pf4j.PluginDescriptorFinder
 import spock.lang.Shared
 import spock.lang.Timeout
 import test.Dsl2Spec
-import software.amazon.awssdk.core.exception.SdkClientException
 
 import java.nio.file.Path
 
 
 /**
- * Unit test for Polly DSL
+ * Unit test for Hello DSL
  *
  * @author : jorge <jorge.aguilera@seqera.io>
  */
@@ -71,7 +70,7 @@ class PollyDslTest extends Dsl2Spec{
             channel.reverse('hi!') 
             '''
         and:
-        def result = new MockScriptRunner([Polly:[prefix:'>>']]).setScript(SCRIPT).execute()
+        def result = new MockScriptRunner([hello:[prefix:'>>']]).setScript(SCRIPT).execute()
         then:
         result.val == 'hi!'.reverse()
         result.val == Channel.STOP
@@ -94,17 +93,17 @@ class PollyDslTest extends Dsl2Spec{
     }
 
     def 'can use an imported function' () {
-        // when:
+        when:
         def SCRIPT = '''
             include {reportMetric} from 'plugin/nf-polly'
             channel
                 .of( reportMetric("key","value") )                
             '''
-        // and:
-        // def result = new MockScriptRunner([:]).setScript(SCRIPT).execute()
-        // then:
-        // // result.val.size() == 20
-        // result.val == Channel.STOP
+        and:
+        def result = new MockScriptRunner([:]).setScript(SCRIPT).execute()
+        then:
+        result.val.size() == 20
+        result.val == Channel.STOP
     }
 
 }
