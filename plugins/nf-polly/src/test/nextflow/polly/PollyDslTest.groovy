@@ -1,4 +1,4 @@
-package nextflow.hello
+package nextflow.polly
 
 import java.nio.file.Files
 import java.util.jar.Manifest
@@ -17,9 +17,7 @@ import java.nio.file.Path
 
 
 /**
- * Unit test for Hello DSL
- *
- * @author : jorge <jorge.aguilera@seqera.io>
+ * Unit test for Polly DSL
  */
 @Timeout(10)
 class PollyDslTest extends Dsl2Spec{
@@ -63,41 +61,11 @@ class PollyDslTest extends Dsl2Spec{
         pluginsMode ? System.setProperty('pf4j.mode',pluginsMode) : System.clearProperty('pf4j.mode')
     }
 
-    def 'should perform a hi and create a channel' () {
+    def 'should return the key-value pair sent to the function' () {
         when:
         def SCRIPT = '''
-            include {reverse} from 'plugin/nf-polly'
-            channel.reverse('hi!') 
-            '''
-        and:
-        def result = new MockScriptRunner([hello:[prefix:'>>']]).setScript(SCRIPT).execute()
-        then:
-        result.val == 'hi!'.reverse()
-        result.val == Channel.STOP
-    }
-
-    def 'should store a goodbye' () {
-        when:
-        def SCRIPT = '''
-            include {goodbye} from 'plugin/nf-polly'
-            channel
-                .of('folks')
-                .goodbye() 
-            '''
-        and:
-        def result = new MockScriptRunner([:]).setScript(SCRIPT).execute()
-        then:
-        result.val == 'Goodbye folks'
-        result.val == Channel.STOP
-        
-    }
-
-    def 'can use an imported function' () {
-        when:
-        def SCRIPT = '''
-            include {reportMetric} from 'plugin/nf-polly'
-            channel
-                .of( reportMetric("key","value") )                
+            include { reportMetric } from 'plugin/nf-polly'
+            reportMetric("key","value")
             '''
         and:
         def result = new MockScriptRunner([:]).setScript(SCRIPT).execute()

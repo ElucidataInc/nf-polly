@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package nextflow.hello
+package nextflow.polly
 
 import groovy.transform.CompileStatic
 import nextflow.plugin.BasePlugin
@@ -22,9 +22,7 @@ import nextflow.plugin.Scoped
 import org.pf4j.PluginWrapper
 
 /**
- * Implements the Hello plugins entry point
- *
- * @author Paolo Di Tommaso <paolo.ditommaso@gmail.com>
+ * Implements the Polly plugins entry point
  */
 @CompileStatic
 class PollyPlugin extends BasePlugin {
