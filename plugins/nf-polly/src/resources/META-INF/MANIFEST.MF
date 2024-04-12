@@ -3,4 +3,4 @@ Plugin-Id: nf-polly
 Plugin-Version: 0.1.0
 Plugin-Class: nextflow.polly.PollyPlugin
 Plugin-Provider: nextflow
-Plugin-Requires: >=24.01.0-edge
+Plugin-Requires: >=23.10.1
