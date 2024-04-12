@@ -1,6 +1,7 @@
 package nextflow.polly
 
-import com.fasterxml.jackson.databind.ObjectMapper
+
+import groovy.json.JsonOutput
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import nextflow.Session
@@ -54,24 +55,46 @@ class PollyExtension extends PluginExtensionPoint {
         this.config = new PollyConfig(session.config.navigate('polly') as Map)
     }
 
+    /**
+     * Report a single metric. This metric will be attached to the currently running job's ID. It
+     * can help provide domain-specific intelligence to pipeline job metrics.
+     * @param key The name of the metric
+     * @param value The value of the metric. Must be either a boolean, a number (int/float) or a
+     * string.
+     */
     @Function
     void reportMetric(var key, var value) {
-    // logger.info("Starting PutRecord Producer");
-    String streamName = "pravaah-dev-user-defined-metrics-events-v1";
-    String partitionKey = "12345";
-    Map<Object, Object> keyValuePairs = Map.of(key, value);
-    try {
-        byte[] data = new ObjectMapper().writeValueAsBytes(Map.of("metricfromTest5", keyValuePairs));
-        KinesisClient client = KinesisClient.builder().build();
-        PutRecordRequest putRequest = PutRecordRequest.builder()
-                .partitionKey(partitionKey)
-                .streamName(streamName)
-                .data(SdkBytes.fromByteArray(data))
-                .build();
-        PutRecordResponse response = client.putRecord(putRequest);
-        System.out.println("Produced Record " + response.sequenceNumber() + " to Shard " + response.shardId() + " (line 145)");
-    } catch (Exception e) {
-        System.out.println("Failed to produce: " + e.getMessage());
+        logger.info(String.format("Putting record with key='%s' & value='%s'", key, value))
+        String streamName = this.config.getMetricsStreamName()
+        String jobId = System.getenv("job_id") ?: "NA"
+        String partitionKey = key.toString()
+        try {
+            Map map = [job_id: jobId, key: key, value: value, type: getValueType(value)]
+            byte[] json = JsonOutput.toJson(map).getBytes()
+            KinesisClient client = KinesisClient.builder().build()
+            PutRecordRequest putRequest = PutRecordRequest.builder()
+                    .partitionKey(partitionKey)
+                    .streamName(streamName)
+                    .data(SdkBytes.fromByteArray(json))
+                    .build() as PutRecordRequest
+            PutRecordResponse response = client.putRecord(putRequest)
+            logger.info(
+                    "Submitted record %s to stream shard %s",
+                    response.sequenceNumber(),
+                    response.shardId()
+            )
+        } catch (Exception e) {
+            logger.error("Failed to produce: " + e.getMessage())
+        }
     }
-}
+
+    private static String getValueType(var value) {
+        if (value instanceof Boolean) {
+            return "boolean"
+        }
+        if (value instanceof Number) {
+            return "number"
+        }
+        return "string"
+    }
 }
