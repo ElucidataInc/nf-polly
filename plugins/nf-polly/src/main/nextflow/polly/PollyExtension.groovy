@@ -79,9 +79,11 @@ class PollyExtension extends PluginExtensionPoint {
                     .build() as PutRecordRequest
             PutRecordResponse response = client.putRecord(putRequest)
             logger.info(
-                    "Submitted record %s to stream shard %s",
-                    response.sequenceNumber(),
-                    response.shardId()
+                    String.format(
+                            "Submitted record %s to stream shard %s",
+                            response.sequenceNumber(),
+                            response.shardId()
+                    )
             )
         } catch (Exception e) {
             logger.error("Failed to produce: " + e.getMessage())

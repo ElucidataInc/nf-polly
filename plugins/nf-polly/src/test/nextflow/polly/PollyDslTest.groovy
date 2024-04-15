@@ -35,7 +35,6 @@ class PollyDslTest extends Dsl2Spec {
             protected PluginDescriptorFinder createPluginDescriptorFinder() {
                 return new TestPluginDescriptorFinder() {
 
-                    @Override
                     protected Manifest readManifestFromDirectory(Path pluginPath) {
                         if (!Files.isDirectory(pluginPath))
                             return null
