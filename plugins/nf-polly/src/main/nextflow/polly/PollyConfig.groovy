@@ -16,7 +16,7 @@ class PollyConfig {
 
     PollyConfig(Map map) {
         def config = map ?: Collections.emptyMap()
-        metricsStreamName = config.metricsStreamName ?: 'pravaah-dev-user-defined-metrics-events-stream-v1'
+        metricsStreamName = config.metricsStreamName ?: "NA"
     }
 
     String getMetricsStreamName() { metricsStreamName }

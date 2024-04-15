@@ -44,6 +44,11 @@ class PollyExtension extends PluginExtensionPoint {
      */
     private PollyConfig config
 
+    /**
+     * A map of 'env' variables set in the Nextflow config file
+     */
+    private Map env
+
     /*
      * nf-core initializes the plugin once loaded and session is ready
      * @param session
@@ -53,6 +58,7 @@ class PollyExtension extends PluginExtensionPoint {
     protected void init(Session session) {
         this.session = session
         this.config = new PollyConfig(session.config.navigate('polly') as Map)
+        this.env = session.config.navigate('env') as Map
     }
 
     /**
@@ -65,8 +71,19 @@ class PollyExtension extends PluginExtensionPoint {
     @Function
     void reportMetric(var key, var value) {
         logger.info(String.format("Putting record with key='%s' & value='%s'", key, value))
+
         String streamName = this.config.getMetricsStreamName()
-        String jobId = System.getenv("job_id") ?: "NA"
+        if (streamName == "NA") {
+            logger.error("No stream set for process to send metrics to. Unable to report metric.")
+            return
+        }
+
+        String jobId = this.env.get("JOB_ID") ?: "NA"
+        if (jobId == "NA") {
+            logger.error("No JOB_ID set for process. Unable to report metric.")
+            return
+        }
+
         String partitionKey = key.toString()
         try {
             Map map = [job_id: jobId, key: key, value: value, type: getValueType(value)]
