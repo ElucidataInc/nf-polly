@@ -1,4 +1,4 @@
-package nextflow.hello
+package nextflow.polly
 
 import groovy.util.logging.Slf4j
 import groovyx.gpars.dataflow.DataflowBroadcast
@@ -41,30 +41,28 @@ class MockScriptRunner extends ScriptRunner {
 
     @Override
     def normalizeOutput(output) {
-        if( output instanceof ChannelOut ) {
+        if (output instanceof ChannelOut) {
             def list = new ArrayList(output.size())
-            for( int i=0; i<output.size(); i++ ) {
+            for (int i = 0; i < output.size(); i++) {
                 list.add(read0(output[i]))
             }
             return list.size() == 1 ? list[0] : list
         }
 
-        if( output instanceof Object[] || output instanceof List) {
+        if (output instanceof Object[] || output instanceof List) {
             def result = new ArrayList<>(output.size())
-            for( def item : output ) {
-                ((List)result).add(read0(item))
+            for (def item : output) {
+                ((List) result).add(read0(item))
             }
             return result
-        }
-
-        else {
+        } else {
             return read0(output)
         }
     }
 
 
-    private read0( obj ) {
-        if( obj instanceof DataflowBroadcast )
+    private read0(obj) {
+        if (obj instanceof DataflowBroadcast)
             return obj.createReadChannel()
         return obj
     }
@@ -100,14 +98,10 @@ class MockExecutorFactory extends ExecutorFactory {
     }
 }
 
-/**
- *
- * @author Paolo Di Tommaso <paolo.ditommaso@gmail.com>
- */
 class MockExecutor extends Executor {
 
     @Override
-    void signal() { }
+    void signal() {}
 
     protected TaskMonitor createTaskMonitor() {
         new MockMonitor()
@@ -115,7 +109,7 @@ class MockExecutor extends Executor {
 
     @Override
     TaskHandler createTaskHandler(TaskRun task) {
-        return new  MockTaskHandler(task)
+        return new MockTaskHandler(task)
     }
 }
 
@@ -130,18 +124,18 @@ class MockMonitor implements TaskMonitor {
      *
      * @param handler A not null {@code TaskHandler} instance
      */
-    boolean evict(TaskHandler handler) { }
+    boolean evict(TaskHandler handler) {}
 
     /**
      * Start the monitoring activity for the queued tasks
      * @return The instance itself, useful to chain methods invocation
      */
-    TaskMonitor start() { }
+    TaskMonitor start() {}
 
     /**
      * Notify when a task terminates
      */
-    void signal() { }
+    void signal() {}
 }
 
 @Slf4j
@@ -154,12 +148,11 @@ class MockTaskHandler extends TaskHandler {
     @Override
     void submit() {
         log.info ">> launching mock task: ${task}"
-        if( task.type == ScriptType.SCRIPTLET ) {
+        if (task.type == ScriptType.SCRIPTLET) {
             task.workDir = Paths.get('.').complete()
             task.stdout = task.script
             task.exitStatus = 0
-        }
-        else {
+        } else {
             task.code.call()
         }
         status = TaskStatus.COMPLETED
@@ -177,6 +170,6 @@ class MockTaskHandler extends TaskHandler {
     }
 
     @Override
-    void kill() { }
+    void kill() {}
 
 }
