@@ -45,6 +45,7 @@ class PollyObserver implements TraceObserver {
      * ...
      * polly {
      *    metricsStreamName = "my-kinesis-stream"
+     *    graphObserverStreamName = "pravaah-dev-graph-observer-stream-v1"
      * }
      */
     private PollyConfig config
@@ -57,7 +58,7 @@ class PollyObserver implements TraceObserver {
 
     @Override
     void onFlowCreate(Session session) {
-        log.info "-------Pipeline is starting! 🚀-----------"
+        log.info "-------Pipeline is starting-----------"
         this.session = session
         this.config = new PollyConfig(session.config.navigate('polly') as Map)
         this.env = session.config.navigate('env') as Map
@@ -65,7 +66,7 @@ class PollyObserver implements TraceObserver {
 
     @Override
     void onFlowComplete() {
-        log.info "----------Pipeline complete! 👋-------------"
+        log.info "----------Pipeline complete-------------"
     }
 
     /*
@@ -73,7 +74,7 @@ class PollyObserver implements TraceObserver {
      */
     @Override
     void onProcessCreate(TaskProcessor process ){
-        log.info "-------------------Process Created! 👋-------------------"
+        log.info "-------------------Process Created-------------------"
         log.info process.getName()
         putRecordToObserverStream(ProcessStatus.CREATED, process.name)
     }
@@ -83,7 +84,7 @@ class PollyObserver implements TraceObserver {
       */
     @Override
     void onProcessTerminate( TaskProcessor process ){
-        log.info "-------------------Process Terminated! 👋-------------------"
+        log.info "-------------------Process Terminated-------------------"
         log.info process.toString()
         putRecordToObserverStream(ProcessStatus.TERMINATED, process.name)
     }
@@ -98,7 +99,7 @@ class PollyObserver implements TraceObserver {
      */
     @Override
     void onProcessPending(TaskHandler handler, TraceRecord trace){
-        log.info "------Process Pending! 👋----------"
+        log.info "------Process Pending----------"
         log.info handler.toString()
         log.info trace.toString()
         putRecordToObserverStream(ProcessStatus.PENDING, handler.task.getName())
@@ -114,7 +115,7 @@ class PollyObserver implements TraceObserver {
      */
     @Override
     void onProcessSubmit(TaskHandler handler, TraceRecord trace){
-        log.info "------Process Submitted! 👋----------"
+        log.info "------Process Submitted----------"
         log.info handler.toString()
         log.info trace.toString()
         putRecordToObserverStream(ProcessStatus.SUBMITTED, handler.task.getName())
@@ -130,7 +131,7 @@ class PollyObserver implements TraceObserver {
      */
     @Override
     void onProcessStart(TaskHandler handler, TraceRecord trace){
-        log.info "------Process Started! 👋----------"
+        log.info "------Process Started----------"
         log.info handler.toString()
         log.info trace.toString()
         putRecordToObserverStream(ProcessStatus.STARTED, handler.task.getName())
@@ -146,7 +147,7 @@ class PollyObserver implements TraceObserver {
      */
     @Override
     void onProcessComplete(TaskHandler handler, TraceRecord trace){
-        log.info "------Process Completed! 👋----------"
+        log.info "------Process Completed----------"
         log.info handler.toString()
         log.info trace.toString()
         putRecordToObserverStream(ProcessStatus.COMPLETED, handler.task.getName())
@@ -164,7 +165,7 @@ class PollyObserver implements TraceObserver {
      */
     @Override
     void onProcessCached(TaskHandler handler, TraceRecord trace){
-        log.info "------Process Cached! 👋----------"
+        log.info "------Process Cached----------"
         log.info handler.toString()
         log.info trace.toString()
         putRecordToObserverStream(ProcessStatus.CACHED, handler.task.getName())
