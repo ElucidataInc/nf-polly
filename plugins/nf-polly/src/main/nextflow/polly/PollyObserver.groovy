@@ -184,7 +184,7 @@ class PollyObserver implements TraceObserver {
             return
         }
 
-        String jobId = this.env.get("JOB_ID") ?: "NA"
+        String jobId = this.env.get("RUN_ID") ?: "NA"
         if (jobId == "NA") {
             logger.error("No JOB_ID set for process. Unable to report metric.")
             return
