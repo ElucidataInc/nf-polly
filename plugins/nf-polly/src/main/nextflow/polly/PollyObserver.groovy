@@ -62,6 +62,8 @@ class PollyObserver implements TraceObserver {
         this.session = session
         this.config = new PollyConfig(session.config.navigate('polly') as Map)
         this.env = session.config.navigate('env') as Map
+        log.info this.config.toString()
+        log.info this.env.toString()
     }
 
     @Override
