@@ -64,6 +64,7 @@ class PollyObserver implements TraceObserver {
         this.env = session.config.navigate('env') as Map
         log.info this.config.toString()
         log.info this.env.toString()
+        log.info "_______________________________________"
     }
 
     @Override
@@ -176,6 +177,7 @@ class PollyObserver implements TraceObserver {
 
     void putRecordToObserverStream(String status, String processName){
         String streamName = this.config.getGraphObserverStreamName()
+        log.info "Stream Name: " + streamName
 
         if (streamName == "NA") {
             logger.error("No stream set for process to send metrics to. Unable to report metric.")
