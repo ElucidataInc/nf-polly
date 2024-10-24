@@ -130,9 +130,8 @@ class PollyObserver implements TraceObserver {
         String task_hash = handler.task.getHash().toString()
         Map params = handler.task.getInputs()
         log.info "__CONFIG__"
-        log.info handler.task.getConfig().toMapString()
-        log.info params.toMapString()
-        log.info task_hash
+        Map<String, Object> data = getDataFromHandlerAndTrace(handler, trace)
+        log.info data.toMapString()
         putRecordToObserverStream(ProcessStatus.SUBMITTED, handler.task.getName())
     }
 
@@ -186,6 +185,19 @@ class PollyObserver implements TraceObserver {
         putRecordToObserverStream(ProcessStatus.CACHED, handler.task.getName())
 
     }
+
+
+    Map<String, Object> getDataFromHandlerAndTrace(TaskHandler handler, TraceRecord trace){
+        Map<String, Object> data = [:]
+        data['inputs'] = handler.task.getInputs()
+        data['input_files_path'] = handler.task.getInputFilesMap()
+        data['machine_config'] = [
+                'cpu': handler.task.getConfig().getCpus(),
+                'memory': handler.task.getConfig().getContainer(),
+        ]
+        return data
+    }
+
 
     void putRecordToObserverStream(String status, String processName){
         String streamName = this.config.getGraphObserverStreamName()
