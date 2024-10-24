@@ -111,6 +111,8 @@ class PollyObserver implements TraceObserver {
         log.info handler.task.getConfig().toMapString()
         log.info params.toMapString()
         log.info task_hash
+        Map<String, Object> data = getDataFromHandlerAndTrace(handler, trace)
+        log.info data.toMapString()
         putRecordToObserverStream(ProcessStatus.PENDING, handler.task.getName())
     }
 
