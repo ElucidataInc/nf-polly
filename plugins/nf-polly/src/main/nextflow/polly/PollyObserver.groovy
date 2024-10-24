@@ -106,12 +106,6 @@ class PollyObserver implements TraceObserver {
         log.info "------Process Pending----------"
         log.info handler.toString()
         log.info trace.toString()
-        String task_hash = handler.task.getHash().toString()
-        Map params = handler.task.getInputs()
-        log.info "__CONFIG__"
-        log.info handler.task.getConfig().toMapString()
-        log.info params.toMapString()
-        log.info task_hash
         Map<String, Object> data = getDataFromHandlerAndTrace(handler, trace)
         log.info data.toMapString()
         putRecordToObserverStream(ProcessStatus.PENDING, handler.task.getName())
@@ -128,11 +122,6 @@ class PollyObserver implements TraceObserver {
     @Override
     void onProcessSubmit(TaskHandler handler, TraceRecord trace){
         log.info "------Process Submitted----------"
-        log.info handler.toString()
-        log.info trace.toString()
-        String task_hash = handler.task.getHash().toString()
-        Map params = handler.task.getInputs()
-        log.info "__CONFIG__"
         Map<String, Object> data = getDataFromHandlerAndTrace(handler, trace)
         log.info data.toMapString()
         putRecordToObserverStream(ProcessStatus.SUBMITTED, handler.task.getName())
@@ -167,6 +156,7 @@ class PollyObserver implements TraceObserver {
         log.info "------Process Completed----------"
         log.info handler.toString()
         log.info trace.toString()
+        trace.getProperty("native_id")
         putRecordToObserverStream(ProcessStatus.COMPLETED, handler.task.getName())
     }
 
@@ -186,7 +176,7 @@ class PollyObserver implements TraceObserver {
         log.info handler.toString()
         log.info trace.toString()
         putRecordToObserverStream(ProcessStatus.CACHED, handler.task.getName())
-
+        trace.getMachineInfo()
     }
 
 
@@ -196,14 +186,21 @@ class PollyObserver implements TraceObserver {
         def inputs = handler.task.getInputs()
         for ( input in inputs ) {
             InParam param = input.key
-            input_map[param.getName()] = input.value
+            input_map[param.getName()] = input.value.getClass().getName()
         }
 
+        data['task_hash'] = handler.task.getHash().toString()
         data['inputs'] = input_map
         data['input_files_path'] = handler.task.getInputFilesMap()
         data['machine_config'] = [
                 'cpu': handler.task.getConfig().getCpus(),
-                'memory': handler.task.getConfig().getContainer(),
+                'container': handler.task.getConfig().getContainer(),
+        ]
+        data['trace'] = [
+                'native_id': trace.getProperty('native_id'),
+                'native_id_2': trace.get('native_id'),
+                'cpu': trace.get('cpus'),
+                'cpu2': trace.getProperty('cpus')
         ]
         return data
     }
