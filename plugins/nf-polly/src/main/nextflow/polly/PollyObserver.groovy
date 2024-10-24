@@ -7,6 +7,7 @@ import groovy.util.logging.Slf4j
 import nextflow.Session
 import nextflow.processor.TaskHandler
 import nextflow.processor.TaskProcessor
+import nextflow.script.params.InParam
 import nextflow.trace.TraceObserver
 import nextflow.trace.TraceRecord
 import org.slf4j.Logger
@@ -191,7 +192,14 @@ class PollyObserver implements TraceObserver {
 
     Map<String, Object> getDataFromHandlerAndTrace(TaskHandler handler, TraceRecord trace){
         Map<String, Object> data = [:]
-        data['inputs'] = handler.task.getInputs()
+        Map<String, Object> input_map = [:]
+        def inputs = handler.task.getInputs()
+        for ( input in inputs ) {
+            InParam param = input.key
+            input_map[param.getName()] = input.value
+        }
+
+        data['inputs'] = input_map
         data['input_files_path'] = handler.task.getInputFilesMap()
         data['machine_config'] = [
                 'cpu': handler.task.getConfig().getCpus(),
