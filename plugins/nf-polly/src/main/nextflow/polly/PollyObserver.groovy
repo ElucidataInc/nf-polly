@@ -105,6 +105,12 @@ class PollyObserver implements TraceObserver {
         log.info "------Process Pending----------"
         log.info handler.toString()
         log.info trace.toString()
+        String task_hash = handler.task.getHash().toString()
+        Map params = handler.task.getInputs()
+        log.info "__CONFIG__"
+        log.info handler.task.getConfig().toMapString()
+        log.info params.toMapString()
+        log.info task_hash
         putRecordToObserverStream(ProcessStatus.PENDING, handler.task.getName())
     }
 
@@ -121,6 +127,12 @@ class PollyObserver implements TraceObserver {
         log.info "------Process Submitted----------"
         log.info handler.toString()
         log.info trace.toString()
+        String task_hash = handler.task.getHash().toString()
+        Map params = handler.task.getInputs()
+        log.info "__CONFIG__"
+        log.info handler.task.getConfig().toMapString()
+        log.info params.toMapString()
+        log.info task_hash
         putRecordToObserverStream(ProcessStatus.SUBMITTED, handler.task.getName())
     }
 
