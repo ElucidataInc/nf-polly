@@ -176,12 +176,11 @@ class PollyObserver implements TraceObserver {
 
         data['task_hash'] = handler.task.getHash().toString()
         data['inputs'] = input_map
-        data['input_files_path'] = handler.task.getInputFilesMap()
         data['machine_config'] = [
-                'native_id': trace.getProperty('native_id'),
-                'cpus': trace.getProperty('cpus'),
-                'memory': trace.getProperty('memory'),
-                'disk': trace.getProperty('disk')
+                'native_id': trace.getProperty('native_id') ?: 'null',
+                'cpus': trace.getProperty('cpus') ?: 'null',
+                'memory': trace.getProperty('memory') ?: 'null',
+                'disk': trace.getProperty('disk') ?: 'null'
         ]
         return data
     }
