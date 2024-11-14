@@ -59,13 +59,9 @@ class PollyObserver implements TraceObserver {
 
     @Override
     void onFlowCreate(Session session) {
-        log.info "-------Pipeline is starting-----------"
         this.session = session
         this.config = new PollyConfig(session.config.navigate('polly') as Map)
         this.env = session.config.navigate('env') as Map
-        log.info this.config.toString()
-        log.info this.env.toString()
-        log.info "_______________________________________"
     }
 
     @Override
@@ -83,11 +79,7 @@ class PollyObserver implements TraceObserver {
      */
     @Override
     void onProcessPending(TaskHandler handler, TraceRecord trace){
-        log.info "------Process Pending----------"
-        log.info handler.toString()
-        log.info trace.toString()
         Map<String, Object> data = getDataFromHandlerAndTrace(handler, trace)
-        log.info data.toMapString()
         putRecordToObserverStream(ProcessStatus.PENDING, handler.task.getName(), data)
     }
 
@@ -101,9 +93,7 @@ class PollyObserver implements TraceObserver {
      */
     @Override
     void onProcessSubmit(TaskHandler handler, TraceRecord trace){
-        log.info "------Process Submitted----------"
         Map<String, Object> data = getDataFromHandlerAndTrace(handler, trace)
-        log.info data.toMapString()
         putRecordToObserverStream(ProcessStatus.SUBMITTED, handler.task.getName(), data)
     }
 
@@ -117,9 +107,6 @@ class PollyObserver implements TraceObserver {
      */
     @Override
     void onProcessStart(TaskHandler handler, TraceRecord trace){
-        log.info "------Process Started----------"
-        log.info handler.toString()
-        log.info trace.toString()
         Map<String, Object> data = getDataFromHandlerAndTrace(handler, trace)
         putRecordToObserverStream(ProcessStatus.STARTED, handler.task.getName(), data)
     }
@@ -134,12 +121,7 @@ class PollyObserver implements TraceObserver {
      */
     @Override
     void onProcessComplete(TaskHandler handler, TraceRecord trace){
-        log.info "------Process Completed----------"
-        log.info handler.toString()
-        log.info trace.toString()
-        trace.getProperty("native_id")
         Map<String, Object> data = getDataFromHandlerAndTrace(handler, trace)
-        log.info data.toMapString()
         putRecordToObserverStream(ProcessStatus.COMPLETED, handler.task.getName(), data)
     }
 
@@ -155,13 +137,8 @@ class PollyObserver implements TraceObserver {
      */
     @Override
     void onProcessCached(TaskHandler handler, TraceRecord trace){
-        log.info "------Process Cached----------"
-        log.info handler.toString()
-        log.info trace.toString()
         Map<String, Object> data = getDataFromHandlerAndTrace(handler, trace)
-        log.info data.toMapString()
         putRecordToObserverStream(ProcessStatus.CACHED, handler.task.getName(), data)
-        trace.getMachineInfo()
     }
 
 
