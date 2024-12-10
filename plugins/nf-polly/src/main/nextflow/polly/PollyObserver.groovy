@@ -79,6 +79,7 @@ class PollyObserver implements TraceObserver {
      */
     @Override
     void onProcessPending(TaskHandler handler, TraceRecord trace){
+        log.info "Process Pending: " + handler.task.getName()
         Map<String, Object> data = getDataFromHandlerAndTrace(handler, trace)
         putRecordToObserverStream(ProcessStatus.PENDING, handler.task.getName(), data)
     }
@@ -94,6 +95,7 @@ class PollyObserver implements TraceObserver {
     @Override
     void onProcessSubmit(TaskHandler handler, TraceRecord trace){
         Map<String, Object> data = getDataFromHandlerAndTrace(handler, trace)
+        log.info "Submitting the process: " + handler.task.getName() + " hash: " + handler.task.getHash().toString()
         putRecordToObserverStream(ProcessStatus.SUBMITTED, handler.task.getName(), data)
     }
 
@@ -107,6 +109,7 @@ class PollyObserver implements TraceObserver {
      */
     @Override
     void onProcessStart(TaskHandler handler, TraceRecord trace){
+        log.info "Process Started: " + handler.task.getName()
         Map<String, Object> data = getDataFromHandlerAndTrace(handler, trace)
         putRecordToObserverStream(ProcessStatus.STARTED, handler.task.getName(), data)
     }
@@ -121,6 +124,7 @@ class PollyObserver implements TraceObserver {
      */
     @Override
     void onProcessComplete(TaskHandler handler, TraceRecord trace){
+        log.info "Process Completed: " + handler.task.getName()
         Map<String, Object> data = getDataFromHandlerAndTrace(handler, trace)
         putRecordToObserverStream(ProcessStatus.COMPLETED, handler.task.getName(), data)
     }
