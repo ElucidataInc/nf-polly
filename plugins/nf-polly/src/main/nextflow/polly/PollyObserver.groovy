@@ -170,6 +170,10 @@ class PollyObserver implements TraceObserver {
         String streamName = this.config.getGraphObserverStreamName()
         log.info "Stream Name: " + streamName
 
+        if (streamName == "NA"){
+            streamName =  this.env.get("GRAPH_OBSERVER_STREAM_NAME") ?: "NA"
+        }
+
         if (streamName == "NA") {
             logger.error("No stream set for process to send metrics to. Unable to report metric.")
             return
