@@ -155,9 +155,6 @@ class PollyObserver implements TraceObserver {
             input_map[param.getName()] = input.value.getClass().getName()
         }
 
-        String infra = this.env.get("INFRA") ?: "NA"
-
-        data['infra'] = infra
         data['process_hash'] = handler.task.getHash().toString()
         data['machine_config'] = [
                 'native_id': trace.getProperty('native_id') ?: 'null',
@@ -188,9 +185,11 @@ class PollyObserver implements TraceObserver {
             return
         }
 
+        String infraName = this.env.get("INFRA") ?: "NA"
+
         String partitionKey = status.toString()
         try {
-            Map map = [job_id: jobId, status: status, process_name: processName, task_detail: data]
+            Map map = [job_id: jobId, status: status, process_name: processName, task_detail: data, infra: infraName]
             byte[] json = JsonOutput.toJson(map).getBytes()
             KinesisClient client = KinesisClient.builder().build()
             PutRecordRequest putRequest = PutRecordRequest.builder()
