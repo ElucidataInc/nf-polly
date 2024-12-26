@@ -155,6 +155,9 @@ class PollyObserver implements TraceObserver {
             input_map[param.getName()] = input.value.getClass().getName()
         }
 
+        String infra = this.env.get("INFRA") ?: "NA"
+
+        data['infra'] = infra
         data['process_hash'] = handler.task.getHash().toString()
         data['machine_config'] = [
                 'native_id': trace.getProperty('native_id') ?: 'null',
