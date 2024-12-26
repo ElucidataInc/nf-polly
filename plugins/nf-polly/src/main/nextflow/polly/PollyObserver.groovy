@@ -185,6 +185,8 @@ class PollyObserver implements TraceObserver {
             return
         }
 
+        log.info this.env.toMapString()
+
         String infraName = this.env.get("INFRA_TYPE") ?: "NA"
         log.info "INFRA_TYPE: " + infraName
         String partitionKey = status.toString()
