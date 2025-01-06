@@ -109,7 +109,6 @@ class PollyObserver implements TraceObserver {
      */
     @Override
     void onProcessStart(TaskHandler handler, TraceRecord trace){
-        log.info "Process Started: " + handler.task.getName()
         Map<String, Object> data = getDataFromHandlerAndTrace(handler, trace)
         putRecordToObserverStream(ProcessStatus.STARTED, handler.task.getName(), data)
     }
@@ -126,6 +125,7 @@ class PollyObserver implements TraceObserver {
     void onProcessComplete(TaskHandler handler, TraceRecord trace){
         log.info "Process Completed: " + handler.task.getName()
         Map<String, Object> data = getDataFromHandlerAndTrace(handler, trace)
+        log.info "____PROCESS_COMPLETE____" + data.toMapString()
         putRecordToObserverStream(ProcessStatus.COMPLETED, handler.task.getName(), data)
     }
 
@@ -168,7 +168,6 @@ class PollyObserver implements TraceObserver {
 
     void putRecordToObserverStream(String status, String processName, Map<String, Object> data){
         String streamName = this.config.getGraphObserverStreamName()
-        log.info "Stream Name: " + streamName
 
         if (streamName == "NA"){
             streamName =  this.env.get("GRAPH_OBSERVER_STREAM_NAME") ?: "NA"
@@ -185,10 +184,7 @@ class PollyObserver implements TraceObserver {
             return
         }
 
-        log.info this.env.toMapString()
-
         String infraName = this.env.get("INFRA_TYPE") ?: "NA"
-        log.info "INFRA_TYPE: " + infraName
         String partitionKey = status.toString()
         try {
             Map map = [job_id: jobId, status: status, process_name: processName, task_detail: data, infra_type: infraName]
