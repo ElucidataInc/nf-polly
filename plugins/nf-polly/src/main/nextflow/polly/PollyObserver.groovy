@@ -168,6 +168,7 @@ class PollyObserver implements TraceObserver {
 
     void putRecordToObserverStream(String status, String processName, Map<String, Object> data){
         String streamName = this.config.getGraphObserverStreamName()
+        long unixTimestampMs = System.currentTimeMillis()
 
         if (streamName == "NA"){
             streamName =  this.env.get("GRAPH_OBSERVER_STREAM_NAME") ?: "NA"
@@ -187,7 +188,7 @@ class PollyObserver implements TraceObserver {
         String infraName = this.env.get("INFRA_TYPE") ?: "NA"
         String partitionKey = status.toString()
         try {
-            Map map = [job_id: jobId, status: status, process_name: processName, task_detail: data, infra_type: infraName]
+            Map map = [job_id: jobId, status: status, process_name: processName, task_detail: data, infra_type: infraName, timestamp: unixTimestampMs]
             byte[] json = JsonOutput.toJson(map).getBytes()
             KinesisClient client = KinesisClient.builder().build()
             PutRecordRequest putRequest = PutRecordRequest.builder()
