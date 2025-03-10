@@ -1,5 +1,6 @@
 
 config ?= compileClasspath
+version ?= $(shell grep 'Plugin-Version' plugins/nf-polly/src/resources/META-INF/MANIFEST.MF | awk '{ print $$2 }')
 
 ifdef module 
 mm = :${module}:
@@ -47,6 +48,12 @@ ifndef class
 else
 	./gradlew ${mm}test --tests ${class}
 endif
+
+install:
+	./gradlew copyPluginZip
+	rm -rf ${HOME}/.nextflow/plugins/nf-polly-${version}
+	cp -r build/plugins/nf-polly-${version} ${HOME}/.nextflow/plugins/
+
 
 assemble:
 	./gradlew assemble
