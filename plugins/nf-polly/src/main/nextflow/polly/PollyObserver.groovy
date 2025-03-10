@@ -95,7 +95,6 @@ class PollyObserver implements TraceObserver {
     @Override
     void onProcessSubmit(TaskHandler handler, TraceRecord trace){
         Map<String, Object> data = getDataFromHandlerAndTrace(handler, trace)
-        log.info "Submitting the process: " + handler.task.getName() + " hash: " + handler.task.getHash().toString()
         putRecordToObserverStream(ProcessStatus.SUBMITTED, handler.task.getName(), data)
     }
 
@@ -123,9 +122,7 @@ class PollyObserver implements TraceObserver {
      */
     @Override
     void onProcessComplete(TaskHandler handler, TraceRecord trace){
-        log.info "Process Completed: " + handler.task.getName()
         Map<String, Object> data = getDataFromHandlerAndTrace(handler, trace)
-        log.info "____PROCESS_COMPLETE____" + data.toMapString()
         putRecordToObserverStream(ProcessStatus.COMPLETED, handler.task.getName(), data)
     }
 
@@ -197,13 +194,13 @@ class PollyObserver implements TraceObserver {
                     .data(SdkBytes.fromByteArray(json))
                     .build() as PutRecordRequest
             PutRecordResponse response = client.putRecord(putRequest)
-            logger.info(
-                    String.format(
-                            "Submitted record %s to stream shard %s",
-                            response.sequenceNumber(),
-                            response.shardId()
-                    )
-            )
+            // logger.info(
+            //         String.format(
+            //                 "Submitted record %s to stream shard %s",
+            //                 response.sequenceNumber(),
+            //                 response.shardId()
+            //         )
+            // )
         } catch (Exception e) {
             logger.error("Failed to produce: " + e.getMessage())
         }
